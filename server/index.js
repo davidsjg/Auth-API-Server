@@ -4,6 +4,10 @@ const http = require("http");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const router = require("./router.js");
+const mongoose = require("mongoose");
+
+// Connect to the Mongo DB
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/authDB");
 
 //create an instance of express, which is 'app'
 const app = express();
