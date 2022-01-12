@@ -1,7 +1,23 @@
 //this is where put logic to run or process a request
 //bring in request object and response object, add some logic, then respond to request
+//we dont implement creating a token from scratch, we use an existing library called JWT Simple
+const { json } = require("body-parser");
+const jwt = require("jwt-simple");
+//import config object created
+const config = require("../config.js");
 
 const User = require("../models/user.js");
+
+//make a function that is going to take a users ID and code it with our secret
+//only argument to this is a user model
+function tokenForUser(user) {
+  const timestamp = new Date().getTime();
+  //first arg is info we want to encode, second is secret we use to encrypt it
+  //sub - JWTs have a sub property, short for subject.  who does this token belong to
+  //subject of this token is this specific user (user.id)
+  //iat = issued at time
+  return jwt.encode({ sub: user.id, iat: timestamp }, config.secret);
+}
 
 exports.signup = function (req, res, next) {
   const emailReq = req.body.email;
@@ -41,7 +57,8 @@ exports.signup = function (req, res, next) {
       if (err) {
         return next(err);
       }
-      res.json({ success: true });
+      //need to send back a token that the user can store and use in the future to make authenticated requests
+      res.json({ token: tokenForUser(user) });
     });
 
     //Respond to request indicating the user was created
