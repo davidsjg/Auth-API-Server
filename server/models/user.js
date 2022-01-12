@@ -39,6 +39,21 @@ userSchema.pre("save", function (next) {
   });
 });
 
+//adding instance method called comparePassword
+//function that is going to take a candidatePassword(submitted password by user) and a callback
+userSchema.methods.comparePassword = function (candidatePassword, callback) {
+  //this is a reference to our user model, so this.password is our hashed and salted password
+  //bcrypt internally do the hashing process on the candidatePassword and then decide if they are equal
+  //if they are equal, isMatch = true
+  bcrypt.compare(candidatePassword, this.password, function (err, isMatch) {
+    if (err) {
+      return callback(err);
+    }
+
+    callback(null, isMatch);
+  });
+};
+
 //Create the model class,
 //tells mongoose theres a new schema about a user, and it corresponds to a collection named 'user'
 const ModelClass = mongoose.model("user", userSchema);

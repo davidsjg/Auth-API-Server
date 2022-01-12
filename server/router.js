@@ -10,6 +10,9 @@ const passport = require("passport");
 //for any particular route we want to require authentication for, we'll use this requireAuth helper
 const requireAuth = passport.authenticate("jwt", { session: false });
 
+//create another helper like above that intercepts the request ahead of time
+const requireSignin = passport.authenticate("local", { session: false });
+
 module.exports = function (app) {
   //call a function called get, get maps directly up to the type of HTTP request that will be issued and we want to handle
   //if a get reqest comes in to '/', run the callback function
@@ -23,6 +26,8 @@ module.exports = function (app) {
   //route handler for our signup route
   //user is posting username and password from front end
   app.post("/signup", authentication.signup);
+
+  app.post("/signin", requireSignin, authentication.signin);
 
   app.get("/", requireAuth, function (req, res) {
     res.send({ hi: "there" });

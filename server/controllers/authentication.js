@@ -65,5 +65,13 @@ exports.signup = function (req, res, next) {
   });
 };
 
+//we have middleware in place to keep users out of singin route if they have not supplied correct email and password
+exports.signin = function (req, res, next) {
+  //user has already had email and password authed, we just need to give them a token
+  //need to get access to the current user model inside of this function
+  //in our passport file, when we set up our local strategy, the final done callback assigns that user to req.user
+  res.send({ token: tokenForUser(req.user) });
+};
+
 //whenever we store a password, we always want to store an encrypted password
 //bcrypt is popular library for encrypting passwords before they are saved

@@ -10,6 +10,59 @@ const config = require("../config.js");
 const JwtStrategy = require("passport-jwt").Strategy;
 const ExtractJwt = require("passport-jwt").ExtractJwt;
 
+//passport local strategy plugin
+const LocalStrategy = require("passport-local");
+
+//Create local strategy
+//first arg is options specifically telling local strategy exactly where to look in teh request to get access to email
+//LocalStrategy expects to be passed a username and a password
+//were not using usernames, we're using emails.  password is found automatically....
+const localOptions = { usernameField: "email" };
+const localLogin = new LocalStrategy(localOptions, function (
+  email,
+  password,
+  done //after the LocalStrategy parses the request, pulls out the email and the password, and gives it to us in below callback
+) {
+  //verify this email and password, call done with the user if it is the correct email and password
+  //otherwise, call done with false
+
+  //need to find user and compare passwords -> find existing user then compare the passwords
+  User.findOne({ email: email }, function (err, user) {
+    if (err) {
+      return done(err);
+    }
+    //case if user is not found.  user thinks they have an account but they really don't
+    if (!user) {
+      return done(null, false);
+    }
+
+    //compare passowrds - is 'password' = user.password
+    //however, when we stored our user, we salted and hashed the password, cant just do string comparison
+    //need to decode encrytped password via bcrypt
+    //when we want to sign in, need to retrieve salt + hashed password stored in database
+    //take the salt(encryption key of sorts) and encrypt password user entered to login
+    //this is going to create a new hashed password
+    //compare stored hashed password with the new hashed password
+    //never actually decript hashed password once it's encrypted
+    //rather, encrypt hashed passwords and compare the two in their hashed state
+
+    //user is from database, password is submitted password
+    user.comparePassword(password, function (err, isMatch) {
+      if (err) {
+        return done(err);
+      }
+      //no error in this case so null, but false because we did not find a user
+      if (!isMatch) {
+        return done(null, false);
+      }
+      // the final done callback assigns that user to req.user
+      return done(null, user);
+    });
+  });
+});
+
+//local (local database or data stored locally) strategy to try and authenticate a user via email and password
+
 //why we need passport
 //need to have some authentication layer that our requests are going to hit before they go to our protected routes/controllers
 //passport makes this happen
@@ -62,5 +115,8 @@ const jwtLogin = new JwtStrategy(jwtOptions, function (payload, done) {
   });
 });
 
-//tell passport to use this strategy
+//tell passport to use JWT strategy
 passport.use(jwtLogin);
+
+//tell passport to use local strategy
+passport.use(localLogin);
