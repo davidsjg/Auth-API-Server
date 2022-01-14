@@ -1,9 +1,13 @@
-import React, { Component } from "react";
+import React from "react";
 import { reduxForm, Field } from "redux-form";
+import { connect } from "react-redux";
+//compose function allows us to write out multiple higher-order components with a cleaner syntax
+import { compose } from "redux";
+import * as actions from "../../actions";
 
-class SignUp extends Component {
+class SignUp extends React.Component {
   onSubmit = (formProps) => {
-    console.log(formProps);
+    this.props.signup(formProps);
   };
 
   render() {
@@ -38,5 +42,14 @@ class SignUp extends Component {
     );
   }
 }
+//need to wire up redux form along with connect helper
+//herlper function provided by redux
 
-export default reduxForm({ form: "signup" })(SignUp);
+//compose allows us to apply multiple higher-order components to a single component with a cleaner syntax
+export default compose(
+  //list out all higher order components that we want to be applied to signup
+  //null, as there are no pieces of state we want to wire up
+  //second argu
+  connect(null, actions),
+  reduxForm({ form: "signup" })
+)(SignUp);

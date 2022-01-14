@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const router = require("./router.js");
 const mongoose = require("mongoose");
+const cors = require("cors");
 
 // Connect to the Mongo DB
 mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/authDB");
@@ -22,6 +23,9 @@ app.use(morgan("combined"));
 //bodyParser is used to parse incoming requests, specifically parsing to JSON
 //attempt to do so, no matter what the request type is.  any requests that is incoming is going to be parsed as though it were JSON
 app.use(bodyParser.json({ type: "*/*" }));
+
+//when we wire this up to our express application, it makes express application say that any request from any URL in the world is ok
+app.use(cors());
 
 router(app);
 
