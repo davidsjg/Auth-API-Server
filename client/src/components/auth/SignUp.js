@@ -36,6 +36,7 @@ class SignUp extends React.Component {
               autoComplete="none"
             />
           </fieldset>
+          <div>{this.props.errorMessage}</div>
           <button>Sign Up!</button>
         </form>
       </div>
@@ -45,11 +46,15 @@ class SignUp extends React.Component {
 //need to wire up redux form along with connect helper
 //herlper function provided by redux
 
+function mapStateToProps(state) {
+  return { errorMessage: state.auth.errorMessage };
+}
+
 //compose allows us to apply multiple higher-order components to a single component with a cleaner syntax
 export default compose(
   //list out all higher order components that we want to be applied to signup
-  //null, as there are no pieces of state we want to wire up
+  //null, as there are no pieces of state we want to wire up - NOW THERE IS = mapStateToProps
   //second argu
-  connect(null, actions),
+  connect(mapStateToProps, actions),
   reduxForm({ form: "signup" })
 )(SignUp);
