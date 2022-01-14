@@ -4,10 +4,13 @@ import { connect } from "react-redux";
 //compose function allows us to write out multiple higher-order components with a cleaner syntax
 import { compose } from "redux";
 import * as actions from "../../actions";
+import { useNavigate } from "react-router-dom";
 
 class SignUp extends React.Component {
   onSubmit = (formProps) => {
-    this.props.signup(formProps);
+    this.props.signup(formProps, () => {
+      this.props.history.push("/feature");
+    });
   };
 
   render() {
