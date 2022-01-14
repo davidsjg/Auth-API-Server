@@ -14,6 +14,7 @@ const ExtractJwt = require("passport-jwt").ExtractJwt;
 const LocalStrategy = require("passport-local");
 
 //Create local strategy
+//local (local database or data stored locally) strategy to try and authenticate a user via email and password
 //first arg is options specifically telling local strategy exactly where to look in teh request to get access to email
 //LocalStrategy expects to be passed a username and a password
 //were not using usernames, we're using emails.  password is found automatically....
@@ -60,8 +61,6 @@ const localLogin = new LocalStrategy(localOptions, function (
     });
   });
 });
-
-//local (local database or data stored locally) strategy to try and authenticate a user via email and password
 
 //why we need passport
 //need to have some authentication layer that our requests are going to hit before they go to our protected routes/controllers
